@@ -19,8 +19,8 @@ import java.util.Properties;
  */
 public class WP_Editor {
 
-	private static final String fileNamePart = "-BJEM-2023-";
-	private static final String urlPrefix = "https://schachjugend-baden.de/wp-content/uploads/BJEM/2023/";
+	private final String fileNamePart;
+	private final String urlPrefix;
 	private final String[] pageLinks;
 	private final long[] pageIDs;
 	private final long gamesPageID;
@@ -34,6 +34,8 @@ public class WP_Editor {
 			pageLinks[page] = client.getPage(pageID).getLink();
 		}
 		gamesPageID = Integer.parseInt(properties.getProperty("Partien"));
+		fileNamePart = properties.getProperty("turnier");
+		urlPrefix = properties.getProperty("ftp_url");
 	}
 
 	public HTML_Tree menu(String[] ageGroups, int indexToBeBuilt) {
@@ -105,7 +107,7 @@ public class WP_Editor {
 				rounds.add(HTML_Tree.hyperlink("[" + suffix.split("\\.")[0] + "]", urlPrefix + ageGroup + "/" + fileName));
 			}
 		}
-		if (rounds.size() == 0) {
+		if (rounds.isEmpty()) {
 			return null;
 		}
 		LinkedList<HTML_Tree> columns = new LinkedList<>();
@@ -129,6 +131,17 @@ public class WP_Editor {
 
 	public HTML_Tree table(String ageGroup, File[] htmls) {
 		LinkedList<HTML_Tree> rows = new LinkedList<>();
+
+		HTML_Tree mann = singleElementRow(ageGroup, htmls, "Mann", "Teilnehmerliste"); // for team tournaments
+		if (mann != null) {
+			rows.add(mann);
+		}
+
+		HTML_Tree mannRang = multiRoundRow(ageGroup, htmls, "MannRang", "Stand nach Runde:");
+		if (mannRang != null) {
+			rows.add(mannRang);
+		}
+
 		HTML_Tree teil = singleElementRow(ageGroup, htmls, "Teil", "Teilnehmerliste");
 		if (teil != null) {
 			rows.add(teil);
