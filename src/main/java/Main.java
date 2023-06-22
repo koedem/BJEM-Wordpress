@@ -13,7 +13,7 @@ import java.util.Properties;
  */
 public class Main {
 
-	private static final String fileName = ".\\bjem.config";
+	private static final String fileName = "." + File.separator + "bjem.config";
 
 	public static void main(String[] args) throws PageNotFoundException {
 		Properties properties = new Properties();
